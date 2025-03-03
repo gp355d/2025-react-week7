@@ -1,6 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { Modal } from "bootstrap";
+import { useDispatch } from "react-redux";
+import { pushMessage } from "../slices/messageSlice"
+import ReactLoading from 'react-loading';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_PATH = import.meta.env.VITE_API_PATH;
 
@@ -11,6 +14,7 @@ function ProductModal({
   setIsProductModalOpen,
   getProducts,
 }) {
+  const [screenLoading, setScreenLoading] = useState(false);
   const productModalRef = useRef(null);
   const fileInputRef = useRef(null);
   //防止直接修改外部傳入的tempProduct設定一個內部的modalData狀態
@@ -23,6 +27,7 @@ function ProductModal({
     }
   }, [isProductModalOpen]);
 
+  const dispatch = useDispatch()
   //關閉產品modal
   const handleCloseProductModal = () => {
     const modalInstance = Modal.getInstance(productModalRef.current);
@@ -50,6 +55,7 @@ function ProductModal({
     } else {
       product = `product`;
     }
+    setScreenLoading(true);
     const url = `${BASE_URL}/v2/api/${API_PATH}/admin/${product}`;
     const productData = {
       data: {
@@ -63,16 +69,31 @@ function ProductModal({
     let res;
     if(modalMode === 'edit'){
       res = await axios.put(url,productData);
-      alert(res.data.message);
+      // alert(res.data.message);
     }
     else{
       res = await axios.post(url, productData);
-      alert(res.data.message);
+      // alert(res.data.message);
     };
+    dispatch(
+      pushMessage({
+        text: `${modalMode === 'create' ? '新增' : '更新'}產品成功`,
+        status: 'success',
+      })
+    );
     handleCloseProductModal();
     getProducts()
   } catch (error) {
-    alert(error.response.data.message);
+    // alert(error.response.data.message);
+    dispatch(
+      pushMessage({
+        text: `${error.response.data.message}`,
+        status: 'error',
+      })
+    );
+  }
+  finally{
+    setScreenLoading(false);
   }
 }
 
@@ -92,13 +113,25 @@ function ProductModal({
       const res = await axios.post(`${BASE_URL}/v2/api/${API_PATH}/admin/upload`,  formData);
   
       const uploadImageUrl = res.data.imageUrl;
-      console.log(uploadImageUrl);
+      // console.log(uploadImageUrl);
   
       setModalData({...modalData,
       imageUrl: uploadImageUrl
       })
+      dispatch(
+        pushMessage({
+          text: `新增圖片成功`,
+          status: 'success',
+        })
+      );
   } catch (error) {
-    alert(error.response.data.message);
+    // alert(error.response.data.message);
+    dispatch(
+      pushMessage({
+        text: `${error.response.data.message}`,
+        status: 'error',
+      })
+    );
   }
   }
   //Modal表單內部input值的變更
@@ -147,7 +180,18 @@ function ProductModal({
    }
   return (
 <>
-      <div ref={productModalRef} id="productModal" aria-hidden="true" tabIndex="-1" className="modal" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
+          {screenLoading && (<div
+        className="d-flex justify-content-center align-items-center"
+        style={{
+          position: "fixed",
+          inset: 0,
+          backgroundColor: "rgba(255,255,255,0.3)",
+          zIndex: 999,
+        }}
+      >
+        <ReactLoading type="spin" color="black" width="4rem" height="4rem" />
+      </div>)}
+      <div ref={productModalRef} id="productModal" className="modal" tabIndex="-1" style={{ backgroundColor: "rgba(0,0,0,0.5)" }}>
         <div className="modal-dialog modal-dialog-centered modal-xl">
           <div className="modal-content border-0 shadow">
             <div className="modal-header border-bottom">

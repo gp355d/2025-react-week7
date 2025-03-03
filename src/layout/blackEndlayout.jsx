@@ -27,7 +27,7 @@ const BackEndlayout = () => {
               <Link className="nav-link active" to="products">產品頁面</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link active" href="order">訂單頁面</Link>
+              <Link className="nav-link active" to="order">訂單頁面</Link>
             </li>
           </ul>
         </div>

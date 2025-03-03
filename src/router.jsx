@@ -2,13 +2,13 @@ import { createHashRouter  } from "react-router-dom";
 import FrontEndLayout from './layout/frontEndlayout';
 import BackEndlyout from "./layout/blackEndlayout";
 // import Home from './views/Home';
-import SingleProduct from "./views/SingleProduct";
+import SingleProduct from "./views/Dashboard/SingleProduct";
 // import About from './views/About';
-import Prouduct from './views/Prouduct'
-import Cart from "./views/Cart";
+import Prouduct from './views/Dashboard/Prouduct';
+import Cart from "./views/Dashboard/Cart";
 import Login from "./views/Login";
-import ProductPage from "./views/ProductPage";
-import Order from "./views/Order";
+import ProductPage from "./views/admin/ProductPage";
+import Order from "./views/admin/Order";
 import NotFound from "./views/Notfound";
 export const router = createHashRouter([
   {
