@@ -11,6 +11,7 @@ const CheckLoin  = () =>{
         navigate("/admin/products");
       } catch (error) {
         alert(error.response.data.message);
+        navigate("/login")
         // setIsAuth(false);
       }
     };
